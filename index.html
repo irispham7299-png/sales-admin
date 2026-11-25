@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Phân Tích Đơn Trễ & KPI Sales Admin - T3/2026</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for clear, interactive data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            scroll-behavior: smooth;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+        }
+        .gradient-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a8a 100%);
+        }
+        .progress-bar-fill {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/20">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-display font-bold text-slate-900 text-base sm:text-lg tracking-tight block leading-none">KPI & SLA Analytics</span>
+                        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Kỳ báo cáo: Tháng 03 / 2026</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+                    <a href="#tong-quan" class="hover:text-blue-600 transition-colors">Tổng quan SLA</a>
+                    <a href="#phan-tich-sale" class="hover:text-blue-600 transition-colors">Phân tích theo Sale</a>
+                    <a href="#nguyen-nhan" class="hover:text-blue-600 transition-colors">Cấu trúc & Nguyên nhân</a>
+                    <a href="#chi-tiet-don" class="hover:text-blue-600 transition-colors">Danh sách đơn trễ</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Xuất PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner Section -->
+    <header class="gradient-hero text-white relative overflow-hidden">
+        <!-- Decorative SVG Grid -->
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-semibold mb-4">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        BÁO CÁO ĐÁNH GIÁ KQ KPI SALES ADMIN & ĐẠI LÝ - T3/2026
+                    </div>
+                    <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+                        Phân Tích Tiến Độ Đơn Hàng & <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-emerald-300">Tỷ Lệ Trễ Theo Sale</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Tổng hợp hiệu suất xử lý <strong>180 đơn hàng</strong> trong tháng 03/2026 của 5 nhân sự Sales Admin. Đánh giá chi tiết tỷ lệ giao trễ, số ngày trễ trung bình và bóc tách các điểm nghẽn vận hành từ khâu xuất kho đến giao nhận.
+                    </p>
+                </div>
+
+                <!-- Highlight Summary Box -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-6 lg:w-96 shrink-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-200">Tỷ lệ hoàn thành đúng hạn</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">Mục tiêu: ≥ 85%</span>
+                    </div>
+                    <div class="flex items-baseline gap-3 mb-2">
+                        <span class="font-display text-4xl sm:text-5xl font-extrabold text-white">86.67%</span>
+                        <span class="text-sm text-emerald-300 font-medium flex items-center gap-1">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Đạt chuẩn KPI
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-800/80 rounded-full h-2.5 mb-4 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-400 to-emerald-400 h-2.5 rounded-full" style="width: 86.67%"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/10 text-xs">
+                        <div>
+                            <span class="text-slate-400 block">Đơn đúng hạn</span>
+                            <span class="font-bold text-white text-base">156 đơn</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Đơn phát sinh trễ</span>
+                            <span class="font-bold text-rose-300 text-base">24 đơn (13.33%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 pb-20 space-y-10">
+
+        <!-- Section 1: 4 Key KPI Cards -->
+        <section id="tong-quan" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Card 1 -->
+            <div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Tổng lượng đơn hàng</span>
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="font-display text-3xl font-extrabold text-slate-900 mb-1">180 <span class="text-base font-medium text-slate-500">đơn</span></div>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+                    Tổng doanh số: <strong class="text-slate-700">12.45 Tỷ VNĐ</strong>
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Tổng đơn trễ hạn</span>
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="font-display text-3xl font-extrabold text-rose-600 mb-1">24 <span class="text-base font-medium text-slate-500">đơn</span></div>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-semibold">13.33%</span>
+                    trên tổng số đơn toàn đội
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Thời gian trễ TB</span>
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="font-display text-3xl font-extrabold text-slate-900 mb-1">2.4 <span class="text-base font-medium text-slate-500">ngày/đơn</span></div>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span class="text-amber-600 font-semibold">Tối đa: 5 ngày</span>
+                    (Tập trung nhóm Đại lý tỉnh)
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glass-card rounded-2xl p-6 transition-transform hover:-translate-y-1">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Điểm KPI Trung Bình</span>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="award" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="font-display text-3xl font-extrabold text-emerald-600 mb-1">91.2 <span class="text-base font-medium text-slate-500">/ 100</span></div>
+                <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                    <span class="text-emerald-600 font-semibold">4/5 nhân sự</span> đạt mức Tốt & Xuất sắc
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: Sales Admin Performance & Delay Rate Charts -->
+        <section id="phan-tich-sale" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600">01. PHÂN TÍCH THEO NHÂN SỰ</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-1">So Sánh Khối Lượng Đơn & Tỷ Lệ Trễ Theo Sale</h2>
+                </div>
+                <!-- Interactive Filter Tabs -->
+                <div class="inline-flex p-1 bg-slate-200/70 rounded-xl self-start">
+                    <button onclick="updateChartView('all')" id="btn-view-all" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-sm transition-all">Tất cả Sales</button>
+                    <button onclick="updateChartView('warning')" id="btn-view-warning" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all">Nhóm cần lưu ý (&gt;15%)</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Chart: Combo Chart (Stacked Orders + Delay Rate Line) -->
+                <div class="lg:col-span-8 glass-card rounded-2xl p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Biểu Đồ Tương Quan: Tổng Đơn Xử Lý vs. Tỷ Lệ Trễ (%)</h3>
+                            <p class="text-xs text-slate-500">Đường màu đỏ thể hiện tỷ lệ trễ (%) so với ngưỡng cảnh báo SLA (15%)</p>
+                        </div>
+                        <div class="flex items-center gap-4 text-xs font-medium">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-blue-600"></span> Đúng hạn</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-rose-500"></span> Đơn trễ</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-amber-500"></span> Tỷ lệ trễ (%)</span>
+                        </div>
+                    </div>
+                    <div class="relative h-80 w-full">
+                        <canvas id="salesComboChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Ranking & Alert Cards -->
+                <div class="lg:col-span-4 glass-card rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1">Xếp Hạng Tỷ Lệ Trễ Theo Sale</h3>
+                        <p class="text-xs text-slate-500 mb-5">Sắp xếp từ thấp nhất (tốt nhất) đến cao nhất</p>
+
+                        <div class="space-y-4" id="salesRankingList">
+                            <!-- Populated dynamically via JS for accuracy and interactivity -->
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 bg-amber-50/80 rounded-xl p-3.5 border border-amber-200/60">
+                        <div class="flex items-start gap-2.5">
+                            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                            <div class="text-xs text-amber-900 leading-relaxed">
+                                <strong>Điểm nóng cần lưu ý:</strong> <strong>Phạm Minh Tuấn</strong> có tỷ lệ trễ cao nhất (<strong>22.86%</strong> - 8/35 đơn), chủ yếu do dồn đơn đại lý tuyến tỉnh cuối tuần và chốt công nợ chậm.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Process Bottleneck Diagram & Delay Causes -->
+        <section id="nguyen-nhan" class="space-y-6">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-blue-600">02. SƠ ĐỒ LUỒNG XỬ LÝ & NGUYÊN NHÂN TRỄ</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Bóc Tách Điểm Nghẽn Quy Trình (24 Đơn Trễ)</h2>
+            </div>
+
+            <!-- Visual Workflow Diagram (Sơ đồ quy trình xử lý đơn & điểm nghẽn) -->
+            <div class="glass-card rounded-2xl p-6 sm:p-8">
+                <h3 class="font-bold text-slate-900 text-base mb-2">Sơ Đồ Phân Bổ Điểm Nghẽn Theo Từng Khâu Vận Hành</h3>
+                <p class="text-xs text-slate-500 mb-6">Theo dõi tỷ trọng 24 đơn bị trễ phát sinh tại từng bước trong chuỗi xử lý từ Sales Admin đến Đại lý</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                    <!-- Step 1 -->
+                    <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">BƯỚC 1</span>
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">6 đơn (25.0%)</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1.5">Tiếp nhận & Duyệt Công Nợ</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">Chờ đại lý bổ sung xác nhận hạn mức công nợ hoặc sửa đổi mã hàng sau khi lên phiếu.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                            <span class="text-slate-500">Trễ TB:</span>
+                            <span class="font-bold text-slate-800">+1.8 ngày</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 (Highest Bottleneck) -->
+                    <div class="relative bg-rose-50/60 border-2 border-rose-300 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+                        <div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                            Điểm nghẽn chính
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold text-xs">BƯỚC 2</span>
+                                <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">10 đơn (41.7%)</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1.5">Soạn Hàng & Xuất Kho</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">Đẩy lệnh xuống kho sát giờ cắt chuyến (cut-off time) và thiếu hụt tồn kho cục bộ một số mã SKU.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-rose-200/70 flex items-center justify-between text-xs">
+                            <span class="text-rose-700 font-medium">Trễ TB:</span>
+                            <span class="font-bold text-rose-700">+2.9 ngày</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">BƯỚC 3</span>
+                                <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">5 đơn (20.8%)</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1.5">Điều Phối Vận Chuyển</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">Chờ ghép chuyến xe tải tuyến tỉnh (Miền Trung & Tây Nguyên) để tối ưu chi phí vận tải.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                            <span class="text-slate-500">Trễ TB:</span>
+                            <span class="font-bold text-slate-800">+2.5 ngày</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">BƯỚC 4</span>
+                                <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">3 đơn (12.5%)</span>
+                            </div>
+                            <h4 class="font-bold text-slate-900 text-sm mb-1.5">Bàn Giao & Ký Nhận Đại Lý</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">Đại lý dời lịch nhận hàng do kho đại lý quá tải vào các ngày cao điểm cuối tháng.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between text-xs">
+                            <span class="text-slate-500">Trễ TB:</span>
+                            <span class="font-bold text-slate-800">+1.3 ngày</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Column Charts: Causes Donut & Weekly Trend -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Donut Chart: Delay Causes -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Cơ Cấu Nguyên Nhân Gây Trễ Đơn</h3>
+                    <p class="text-xs text-slate-500 mb-4">Phân bổ tỷ trọng trên tổng số 24 đơn trễ trong tháng 03/2026</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 items-center gap-4">
+                        <div class="relative h-56">
+                            <canvas id="causeDonutChart"></canvas>
+                        </div>
+                        <div class="space-y-3 text-xs">
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium text-slate-700">
+                                    <span class="w-3 h-3 rounded-full bg-rose-500"></span> Đẩy lệnh kho trễ giờ
+                                </span>
+                                <span class="font-bold text-slate-900">10 đơn (41.7%)</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium text-slate-700">
+                                    <span class="w-3 h-3 rounded-full bg-amber-500"></span> Chờ duyệt công nợ
+                                </span>
+                                <span class="font-bold text-slate-900">6 đơn (25.0%)</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium text-slate-700">
+                                    <span class="w-3 h-3 rounded-full bg-blue-500"></span> Ghép chuyến xe tỉnh
+                                </span>
+                                <span class="font-bold text-slate-900">5 đơn (20.8%)</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                <span class="flex items-center gap-2 font-medium text-slate-700">
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Đại lý hẹn lại ngày nhận
+                                </span>
+                                <span class="font-bold text-slate-900">3 đơn (12.5%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Trend Chart -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Diễn Biến Tỷ Lệ Đơn Trễ Theo Tuần (T3/2026)</h3>
+                    <p class="text-xs text-slate-500 mb-4">Áp lực chốt doanh số khiến đơn trễ tăng mạnh vào Tuần 4</p>
+                    <div class="relative h-56 w-full">
+                        <canvas id="weeklyTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Detailed Table of Sales KPI & Delayed Orders -->
+        <section id="chi-tiet-don" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600">03. BẢNG DỮ LIỆU CHI TIẾT</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Bảng Tổng Hợp KPI & Tra Cứu Đơn Trễ</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="saleFilterSelect" onchange="filterDelayedTable()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="ALL">Tất cả Sales Admin (24 đơn trễ)</option>
+                        <option value="Phạm Minh Tuấn">Phạm Minh Tuấn (8 đơn)</option>
+                        <option value="Lê Hoàng Nam">Lê Hoàng Nam (6 đơn)</option>
+                        <option value="Nguyễn Thị Mai Anh">Nguyễn Thị Mai Anh (4 đơn)</option>
+                        <option value="Trần Thu Hà">Trần Thu Hà (4 đơn)</option>
+                        <option value="Vũ Thị Thanh Tâm">Vũ Thị Thanh Tâm (2 đơn)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Summary Matrix Table by Sale -->
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm">Bảng 1: Tổng Hợp Hiệu Suất & Điểm KPI Theo Từng Sales Admin</h3>
+                    <span class="text-xs text-slate-500">Đơn vị tính: Đơn hàng / %</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-3.5 px-6 font-bold">Nhân viên Sales Admin</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Tổng đơn</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Đúng hạn</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Đơn trễ</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Tỷ lệ trễ</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Trễ TB (Ngày)</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Điểm KPI</th>
+                                <th class="py-3.5 px-6 font-bold text-right">Đánh giá SLA</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm" id="kpiMatrixBody">
+                            <!-- Rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Delayed Orders Log Table -->
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm">Bảng 2: Danh Sách Chi Tiết Các Đơn Hàng Trễ Tiêu Biểu</h3>
+                    <span id="filteredCountBadge" class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 font-bold text-xs">Hiển thị 12 đơn tiêu biểu</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-3.5 px-6 font-bold">Mã Đơn</th>
+                                <th class="py-3.5 px-4 font-bold">Đại Lý / Khách Hàng</th>
+                                <th class="py-3.5 px-4 font-bold">Sales Phụ Trách</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Cam Kết Giao</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Thực Tế Giao</th>
+                                <th class="py-3.5 px-4 font-bold text-center">Số Ngày Trễ</th>
+                                <th class="py-3.5 px-6 font-bold">Nguyên Nhân & Ghi Chú</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-xs sm:text-sm" id="delayedOrdersBody">
+                            <!-- Rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Actionable Recommendations -->
+        <section class="bg-slate-900 text-white rounded-3xl p-6 sm:p-10 shadow-xl">
+            <div class="max-w-3xl mb-8">
+                <span class="text-xs font-bold uppercase tracking-wider text-blue-400">04. ĐỀ XUẤT CẢI THIỆN SLA THÁNG 04/2026</span>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold mt-1">Giải Pháp Giảm Tỷ Lệ Đơn Trễ Xuống Dưới 8%</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center mb-4">
+                        <i data-lucide="alarm-clock" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-base mb-2">1. Siết Chặt Khung Giờ Cut-off</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Quy định chốt đơn trước <strong>14h30 hàng ngày</strong> để bộ phận kho kịp đóng gói trong ngày. Các đơn phát sinh sau 14h30 tự động tính SLA sang ngày làm việc kế tiếp.
+                    </p>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center mb-4">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-base mb-2">2. Cảnh Báo Công Nợ Tự Động</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Sales Admin rà soát hạn mức công nợ của nhóm Đại lý cấp 1 trước ngày 20 hàng tháng, tránh tình trạng dồn đơn và tắc nghẽn duyệt công nợ vào Tuần 4.
+                    </p>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-4">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-base mb-2">3. Kèm Cặp 1-1 Nhân Sự Cao Điểm</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Hỗ trợ phân bổ lại tỷ trọng đơn đại lý tuyến tỉnh của <strong>Phạm Minh Tuấn</strong> và áp dụng checklist kiểm tra tồn kho thực tế trước khi xác nhận lịch giao.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            Báo cáo được tổng hợp từ dữ liệu <strong>Bao cao KQ KPI_Sales Admin_Dai ly_T3.2026</strong> • Cập nhật tự động cho Ban Giám Đốc & Quản Lý Kinh Doanh.
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Dataset based on T3.2026 Sales Admin & Agency KPI Report
+        const salesData = [
+            {
+                name: "Vũ Thị Thanh Tâm",
+                role: "Senior Sales Admin",
+                totalOrders: 34,
+                onTimeOrders: 32,
+                lateOrders: 2,
+                lateRate: 5.88,
+                avgLateDays: 1.5,
+                kpiScore: 97.5,
+                status: "Xuất sắc",
+                badgeColor: "emerald"
+            },
+            {
+                name: "Nguyễn Thị Mai Anh",
+                role: "Sales Admin - Kênh Đại Lý",
+                totalOrders: 42,
+                onTimeOrders: 38,
+                lateOrders: 4,
+                lateRate: 9.52,
+                avgLateDays: 2.0,
+                kpiScore: 94.0,
+                status: "Tốt",
+                badgeColor: "blue"
+            },
+            {
+                name: "Trần Thu Hà",
+                role: "Sales Admin - Miền Nam",
+                totalOrders: 31,
+                onTimeOrders: 27,
+                lateOrders: 4,
+                lateRate: 12.90,
+                avgLateDays: 2.2,
+                kpiScore: 91.0,
+                status: "Đạt chuẩn",
+                badgeColor: "blue"
+            },
+            {
+                name: "Lê Hoàng Nam",
+                role: "Sales Admin - Miền Trung",
+                totalOrders: 38,
+                onTimeOrders: 32,
+                lateOrders: 6,
+                lateRate: 15.79,
+                avgLateDays: 2.7,
+                kpiScore: 88.0,
+                status: "Cần lưu ý",
+                badgeColor: "amber"
+            },
+            {
+                name: "Phạm Minh Tuấn",
+                role: "Sales Admin - Đại Lý Tỉnh",
+                totalOrders: 35,
+                onTimeOrders: 27,
+                lateOrders: 8,
+                lateRate: 22.86,
+                avgLateDays: 3.1,
+                kpiScore: 85.5,
+                status: "Cảnh báo SLA",
+                badgeColor: "rose"
+            }
+        ];
+
+        const delayedOrdersSample = [
+            { id: "DH-2603-018", agency: "Đại lý Minh Phát (Đà Nẵng)", sale: "Phạm Minh Tuấn", due: "08/03/2026", actual: "12/03/2026", days: 4, reason: "Đẩy lệnh xuống kho sau 16h + chờ ghép xe tuyến Trung" },
+            { id: "DH-2603-042", agency: "NPP Hoàng Gia (Bình Dương)", sale: "Nguyễn Thị Mai Anh", due: "11/03/2026", actual: "13/03/2026", days: 2, reason: "Chờ kế toán duyệt mở hạn mức công nợ vượt 15%" },
+            { id: "DH-2603-067", agency: "Đại lý Thành Công (Nghệ An)", sale: "Lê Hoàng Nam", due: "14/03/2026", actual: "17/03/2026", days: 3, reason: "Thiếu 2 mã hàng chủ lực, chờ nhập bổ sung từ kho tổng" },
+            { id: "DH-2603-089", agency: "Đại lý Tân Tiến (Cần Thơ)", sale: "Trần Thu Hà", due: "16/03/2026", actual: "18/03/2026", days: 2, reason: "Đại lý báo dời lịch nhận sang thứ 4 do sửa chữa kho" },
+            { id: "DH-2603-104", agency: "NPP Đại Việt (Đắk Lắk)", sale: "Phạm Minh Tuấn", due: "19/03/2026", actual: "24/03/2026", days: 5, reason: "Dồn đơn cuối tuần, thiếu xe tải tuyến Tây Nguyên" },
+            { id: "DH-2603-119", agency: "Đại lý An Phú (Đồng Nai)", sale: "Vũ Thị Thanh Tâm", due: "21/03/2026", actual: "23/03/2026", days: 2, reason: "Khách điều chỉnh tăng số lượng sau khi đã xuất phiếu" },
+            { id: "DH-2603-135", agency: "NPP Hưng Thịnh (Khánh Hòa)", sale: "Lê Hoàng Nam", due: "23/03/2026", actual: "26/03/2026", days: 3, reason: "Chậm xác nhận đối chiếu công nợ kỳ tháng 02" },
+            { id: "DH-2603-148", agency: "Đại lý Gia Bảo (Gia Lai)", sale: "Phạm Minh Tuấn", due: "25/03/2026", actual: "28/03/2026", days: 3, reason: "Chốt đơn sát giờ cut-off ngày thứ 6" },
+            { id: "DH-2603-156", agency: "Đại lý Kim Long (TP.HCM)", sale: "Nguyễn Thị Mai Anh", due: "26/03/2026", actual: "28/03/2026", days: 2, reason: "Kho quá tải đóng gói đợt khuyến mãi cuối tháng" },
+            { id: "DH-2603-163", agency: "NPP Phương Nam (Long An)", sale: "Trần Thu Hà", due: "27/03/2026", actual: "29/03/2026", days: 2, reason: "Sai thông tin địa chỉ chành xe nhận hàng" },
+            { id: "DH-2603-171", agency: "Đại lý Quốc Bảo (Quảng Nam)", sale: "Lê Hoàng Nam", due: "28/03/2026", actual: "31/03/2026", days: 3, reason: "Chờ ghép chuyến hàng cồng kềnh tuyến miền Trung" },
+            { id: "DH-2603-178", agency: "NPP Vĩnh Tường (Lâm Đồng)", sale: "Phạm Minh Tuấn", due: "29/03/2026", actual: "01/04/2026", days: 3, reason: "Áp lực đơn chốt sổ cuối tháng, kho xuất trễ 1 nhịp" }
+        ];
+
+        // 1. Render Sales Ranking List
+        function renderRankingList() {
+            const container = document.getElementById('salesRankingList');
+            container.innerHTML = salesData.map((s, idx) => {
+                const barColor = s.lateRate > 20 ? 'bg-rose-500' : (s.lateRate > 15 ? 'bg-amber-500' : (s.lateRate > 10 ? 'bg-blue-500' : 'bg-emerald-500'));
+                const textColor = s.lateRate > 20 ? 'text-rose-600' : (s.lateRate > 15 ? 'text-amber-600' : 'text-slate-700');
+                return `
+                    <div class="group">
+                        <div class="flex items-center justify-between text-xs mb-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-md bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-[11px]">${idx + 1}</span>
+                                <span class="font-bold text-slate-800">${s.name}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-extrabold ${textColor}">${s.lateRate.toFixed(2)}%</span>
+                                <span class="text-slate-400 text-[11px] ml-1">(${s.lateOrders}/${s.totalOrders})</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="${barColor} h-2 rounded-full progress-bar-fill" style="width: ${Math.min(s.lateRate * 3.5, 100)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 2. Render KPI Matrix Table
+        function renderKpiMatrix() {
+            const tbody = document.getElementById('kpiMatrixBody');
+            const badgeStyles = {
+                emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                blue: 'bg-blue-50 text-blue-700 border-blue-200',
+                amber: 'bg-amber-50 text-amber-700 border-amber-200',
+                rose: 'bg-rose-50 text-rose-700 border-rose-200'
+            };
+
+            tbody.innerHTML = salesData.map(s => `
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="py-3.5 px-6">
+                        <div class="font-bold text-slate-900">${s.name}</div>
+                        <div class="text-xs text-slate-500">${s.role}</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${s.totalOrders}</td>
+                    <td class="py-3.5 px-4 text-center font-semibold text-emerald-600">${s.onTimeOrders}</td>
+                    <td class="py-3.5 px-4 text-center font-bold text-rose-600">${s.lateOrders}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <span class="font-extrabold ${s.lateRate > 15 ? 'text-rose-600' : 'text-slate-800'}">${s.lateRate.toFixed(2)}%</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-center text-slate-600 font-medium">${s.avgLateDays} ngày</td>
+                    <td class="py-3.5 px-4 text-center font-bold text-slate-900">${s.kpiScore.toFixed(1)}</td>
+                    <td class="py-3.5 px-6 text-right">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeStyles[s.badgeColor]}">
+                            ${s.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 3. Render & Filter Delayed Orders Table
+        function filterDelayedTable() {
+            const selectedSale = document.getElementById('saleFilterSelect').value;
+            const tbody = document.getElementById('delayedOrdersBody');
+            const badge = document.getElementById('filteredCountBadge');
+
+            const filtered = selectedSale === 'ALL'
+                ? delayedOrdersSample
+                : delayedOrdersSample.filter(item => item.sale === selectedSale);
+
+            badge.textContent = `Hiển thị ${filtered.length} đơn tiêu biểu`;
+
+            tbody.innerHTML = filtered.map(order => {
+                const dayBadge = order.days >= 4
+                    ? 'bg-rose-100 text-rose-700 border-rose-200'
+                    : (order.days === 3 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-700 border-slate-200');
+                return `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3.5 px-6 font-mono font-bold text-blue-600 text-xs">${order.id}</td>
+                        <td class="py-3.5 px-4 font-semibold text-slate-800">${order.agency}</td>
+                        <td class="py-3.5 px-4 text-slate-700 font-medium">${order.sale}</td>
+                        <td class="py-3.5 px-4 text-center text-slate-500 text-xs">${order.due}</td>
+                        <td class="py-3.5 px-4 text-center text-slate-700 font-medium text-xs">${order.actual}</td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold border ${dayBadge}">
+                                +${order.days} ngày
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-6 text-slate-600 text-xs leading-relaxed">${order.reason}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 4. Charts Initialization
+        let comboChartInstance = null;
+
+        function initComboChart(filterMode = 'all') {
+            const ctx = document.getElementById('salesComboChart').getContext('2d');
+            const dataset = filterMode === 'warning'
+                ? salesData.filter(s => s.lateRate > 15)
+                : salesData;
+
+            if (comboChartInstance) {
+                comboChartInstance.destroy();
+            }
+
+            comboChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dataset.map(s => s.name),
+                    datasets: [
+                        {
+                            label: 'Đơn đúng hạn',
+                            data: dataset.map(s => s.onTimeOrders),
+                            backgroundColor: '#2563eb',
+                            borderRadius: 6,
+                            stack: 'orders',
+                            order: 2
+                        },
+                        {
+                            label: 'Đơn trễ hạn',
+                            data: dataset.map(s => s.lateOrders),
+                            backgroundColor: '#f43f5e',
+                            borderRadius: 6,
+                            stack: 'orders',
+                            order: 2
+                        },
+                        {
+                            label: 'Tỷ lệ trễ (%)',
+                            data: dataset.map(s => s.lateRate),
+                            type: 'line',
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#f59e0b',
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.dataset.yAxisID === 'y1') {
+                                        label += context.parsed.y + '%';
+                                    } else {
+                                        label += context.parsed.y + ' đơn';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter', size: 11, weight: '600' }, color: '#334155' }
+                        },
+                        y: {
+                            stacked: true,
+                            title: { display: true, text: 'Số lượng đơn hàng', font: { size: 11, weight: '600' }, color: '#64748b' },
+                            grid: { color: '#f1f5f9' },
+                            beginAtZero: true,
+                            max: 50
+                        },
+                        y1: {
+                            position: 'right',
+                            title: { display: true, text: 'Tỷ lệ trễ (%)', font: { size: 11, weight: '600' }, color: '#d97706' },
+                            grid: { drawOnChartArea: false },
+                            beginAtZero: true,
+                            max: 30,
+                            ticks: {
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartView(mode) {
+            const btnAll = document.getElementById('btn-view-all');
+            const btnWarn = document.getElementById('btn-view-warning');
+            if (mode === 'all') {
+                btnAll.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-sm transition-all";
+                btnWarn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all";
+            } else {
+                btnWarn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-sm transition-all";
+                btnAll.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all";
+            }
+            initComboChart(mode);
+        }
+
+        function initSecondaryCharts() {
+            // Donut Chart: Delay Causes
+            const donutCtx = document.getElementById('causeDonutChart').getContext('2d');
+            new Chart(donutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Đẩy lệnh kho trễ giờ', 'Chờ duyệt công nợ', 'Ghép chuyến xe tỉnh', 'Đại lý hẹn lại ngày nhận'],
+                    datasets: [{
+                        data: [10, 6, 5, 3],
+                        backgroundColor: ['#f43f5e', '#f59e0b', '#3b82f6', '#10b981'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    }
+                }
+            });
+
+            // Weekly Trend Line/Bar Chart
+            const weeklyCtx = document.getElementById('weeklyTrendChart').getContext('2d');
+            new Chart(weeklyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Tuần 1 (01-07/03)', 'Tuần 2 (08-14/03)', 'Tuần 3 (15-21/03)', 'Tuần 4 (22-31/03)'],
+                    datasets: [
+                        {
+                            label: 'Tỷ lệ đơn trễ (%)',
+                            data: [8.5, 10.2, 12.8, 19.6],
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'rgba(244, 63, 94, 0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#f43f5e'
+                        },
+                        {
+                            label: 'Ngưỡng SLA cho phép (15%)',
+                            data: [15, 15, 15, 15],
+                            borderColor: '#94a3b8',
+                            borderDash: [6, 6],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11, family: 'Inter' } }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                        y: {
+                            beginAtZero: true,
+                            max: 25,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { callback: v => v + '%', font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Run all renders on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRankingList();
+            renderKpiMatrix();
+            filterDelayedTable();
+            initComboChart('all');
+            initSecondaryCharts();
+        });
+    </script>
+</body>
+</html>
